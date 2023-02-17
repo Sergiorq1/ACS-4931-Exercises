@@ -18,4 +18,4 @@ class Price:
     def base_price(self):
         return self.quantity * self.item_price
 
-price = Price()
+price = Price(2, 13)

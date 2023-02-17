@@ -22,7 +22,8 @@ class Student:
 class School:
     def __init__(self, students) -> None:
         self.students = students
-    def process_graduation(self):
+
+    def graduated(self):
         # Find the students in the school who have successfully graduated.
         min_gpa = 2.5 # minimum acceptable GPA
         passed_students = []
@@ -35,19 +36,28 @@ class School:
         for s in passed_students:
             print(s.name)
         print('****************************')
-        # Send congrat emails to them.
+        # Send congratulation emails to them.
         for s in passed_students:
             s.send_congrat_email()
+        return passed_students
+    
+    def get_top_10(self, passed_students):
         # Find the top 10% of them and send their contact to the top employers
         passed_students.sort(key=lambda s: s.get_gpa())
         percentile = 0.9
         index = int(percentile * len(passed_students))
         top_10_percent = passed_students[index:]
+        return top_10_percent
+
+    def send_top_employers(self, top_10_percent):
         top_employers = [Employer('Microsoft'), Employer('Free Software Foundation'), Employer('Google')]
         for e in top_employers:
             e.send(top_10_percent)
 
 students = [Student(2.1, 'donald'), Student(2.3, 'william'), Student(2.7, 'toro'),
-            Student(3.9, 'lili'), Student(3.2,'kami'), Student(3,'sarah')]
+            Student(3.9, 'lily'), Student(3.2,'kami'), Student(3,'sarah')]
 school  = School(students)
-school.process_graduation()
+bachelors = school.graduated()
+top_10 = school.get_top_10(bachelors)
+school.send_top_employers(top_10)
+
