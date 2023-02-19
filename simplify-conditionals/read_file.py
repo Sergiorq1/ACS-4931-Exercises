@@ -4,11 +4,7 @@
 # This code snippet reads up to the end of the file
 n = 16
 with open('foobar.file', 'rb') as fp:
-    running = True
-    while running:
+    while chunk != '':
         chunk = fp.read(n)
-        if chunk == '': # end of file, stop running.
-            running = False
-        else:
-            print(chunk)
+        print(chunk)
         # process(chunk)
