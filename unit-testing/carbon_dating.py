@@ -15,4 +15,32 @@ def get_age_carbon_14_dating(carbon_14_ratio):
     in the sample conpared to the amount in living
     tissue (unitless).
     """
+
+    if carbon_14_ratio <= 0 or carbon_14_ratio >= 1:
+        return 0
     return math.log(carbon_14_ratio) / DECAY_CONSTANT * T_HALF
+
+def test_carbon_14_dating_normal():
+    #Test 35 percent
+    carbon_14_ratio = 0.35
+    expected_result = 8680.34
+    actual_result = get_age_carbon_14_dating(carbon_14_ratio)
+
+    assert math.isclose(actual_result, expected_result, rel_tol=0.1)
+
+def test_carbon_14_dating_low():
+    # Test 0 percent or lower
+    carbon_14_ratio = 0
+    expected_result = 0
+    actual_result = get_age_carbon_14_dating(carbon_14_ratio)
+
+    assert math.isclose(actual_result, expected_result, rel_tol=0.1)
+
+def test_carbon_14_dating_high():
+    #Test 100 percent or higher
+    carbon_14_ratio = 1
+    expected_result = 0
+    actual_result = get_age_carbon_14_dating(carbon_14_ratio)
+
+    assert math.isclose(actual_result, expected_result, rel_tol=0.1)
+

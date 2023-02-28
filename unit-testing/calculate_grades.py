@@ -38,4 +38,14 @@ def print_stat(mean, sd):
     print('The population standard deviation of grades is: ', round(sd, 3))
     print('****** END ******')
 
-display_grade_stat()
+# display_grade_stat()
+
+def test_mean_standard_deviation_normal_use_case():
+    grade_list = [2,3,3,4,4]
+    actual_mean, actual_sd = calculate_stat(grade_list)
+    
+    expected_mean = 3.2
+    expected_sd = 0.748
+
+    assert math.isclose(actual_mean, expected_mean, rel_tol=0.1)
+    assert math.isclose(actual_sd, expected_sd, rel_tol=0.1)
