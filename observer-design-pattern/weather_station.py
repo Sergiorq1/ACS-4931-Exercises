@@ -13,7 +13,7 @@ class Subject:
         pass
 
     # This method is called to notify all observers
-    # when the Subject's state (measuremetns) has changed.
+    # when the Subject's state (measurements) has changed.
     def notifyObservers():
         pass
 
@@ -66,7 +66,7 @@ class WeatherData(Subject):
 class CurrentConditionsDisplay(Observer):
 
     def __init__(self, weatherData):
-        self.temerature = 0
+        self.temperature = 0
         self.humidity = 0
         self.pressure = 0
 
@@ -74,36 +74,85 @@ class CurrentConditionsDisplay(Observer):
         weatherData.registerObserver(self) # register the observer
                                            # so it gets data updates.
     def update(self, temperature, humidity, pressure):
-        self.temerature = temperature
+        self.temperature = temperature
         self.humidity = humidity
         self.pressure = pressure
         self.display()
 
     def display(self):
-        print("Current conditions:", self.temerature,
+        print("Current conditions:", self.temperature,
               "F degrees and", self.humidity,"[%] humidity",
               "and pressure", self.pressure)
 
 # TODO: implement StatisticsDisplay class and ForecastDisplay class.
+class StatisticsDisplay(Observer):
+    """
+    Takes all temperature attributes and stores them in a list to be able to show stats like the average, highest, and lowest
+    """
+    # The StatisticsDisplay class should keep track of the min/average/max
+    # measurements and display them.
+    def __init__(self, weatherData):
+        self.temperature_list = []
+        self.humidity_list = []
+        self.pressure_list = []
+
+        self.weatherData = weatherData # save the ref in an attribute.
+        weatherData.registerObserver(self) # register the observer so it gets data updates.
+
+    def update(self, temperature, humidity, pressure):
+        self.temperature_list.append(temperature)
+        self.humidity_list.append(humidity)
+        self.pressure_list.append(pressure)
+        self.display()
+
+    def display(self):
+        print("Temperature: Min:", min(self.temperature_list),
+              "Avg:", sum(self.temperature_list) / len(self.temperature_list),
+              "Max:", max(self.temperature_list), '\n')
+        print("Humidity: Min:", min(self.humidity_list),
+              "Avg:", sum(self.humidity_list) / len(self.humidity_list),
+              "Max:", max(self.humidity_list), '\n')
+        print("Pressure: Min:", min(self.pressure_list),
+              "Avg:", sum(self.pressure_list) / len(self.pressure_list),
+              "Max:", max(self.pressure_list), '\n')
 
 
+class ForecastDisplay(Observer):
+    # The ForecastDisplay class shows the weather forecast based on the current
+    # temperature, humidity and pressure. Use the following formulas :
+    # forecast_temp = temperature + 0.11 * humidity + 0.2 * pressure
+    # forecast_humidity = humidity - 0.9 * humidity
+    # forecast_pressure = pressure + 0.1 * temperature - 0.21 * pressure
+    def __init__(self, weatherData):
+        self.forecast_temperature = 0
+        self.forecast_humidity = 0
+        self.forecast_pressure = 0
+
+        self.weatherData = weatherData
+        weatherData.registerObserver(self)
+
+    def update(self, temperature, humidity, pressure):
+        self.forecast_temperature = temperature + 0.11 * humidity + 0.2 * pressure
+        self.forecast_humidity = humidity - 0.9 * humidity
+        self.forecast_pressure = pressure + 0.1 * temperature - 0.21 * pressure
+        self.display()
+
+    def display(self):
+        print("Weather forecast: Temperature:", self.forecast_temperature,
+              "Humidity:", self.forecast_humidity,
+              "Pressure:", self.forecast_pressure)
+
+#Where the Subject and the observer meet
 class WeatherStation:
     def main(self):
         weather_data = WeatherData()
         current_display = CurrentConditionsDisplay(weather_data)
 
         # TODO: Create two objects from StatisticsDisplay class and
-        # ForecastDisplay class. Also register them to the concerete instance
+        # ForecastDisplay class. Also register them to the concrete instance
         # of the Subject class so the they get the measurements' updates.
-
-        # The StatisticsDisplay class should keep track of the min/average/max
-        # measurements and display them.
-
-        # The ForecastDisplay class shows the weather forcast based on the current
-        # temperature, humidity and pressure. Use the following formuals :
-        # forcast_temp = temperature + 0.11 * humidity + 0.2 * pressure
-        # forcast_humadity = humidity - 0.9 * humidity
-        # forcast_pressure = pressure + 0.1 * temperature - 0.21 * pressure
+        statistics_display = StatisticsDisplay(weather_data)
+        forecast_display = ForecastDisplay(weather_data)
 
         weather_data.setMeasurements(80, 65,30.4)
         weather_data.setMeasurements(82, 70,29.2)
